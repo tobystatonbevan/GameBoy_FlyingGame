@@ -1,3 +1,5 @@
 GameBoy_Walkaround.gb
 GameBoy_Walkaround.sav
 /.vscode
+.vscode/settings.json
+.vscode/c_cpp_properties.json
