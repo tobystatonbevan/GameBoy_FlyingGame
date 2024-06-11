@@ -1,2 +1,4 @@
 
-.vscode/c_cpp_properties.json
+.vscode
+GameBoy_Walkaround.gb
+GameBoy_Walkaround.sav
