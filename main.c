@@ -1,11 +1,23 @@
 #include <gb/gb.h>
 #include <stdio.h>
+#include <stdint.h>
 #include <gbdk/font.h>
 #include "arrow.c"
 #include "arrowmap.c"
 #include "citymaptiles.c"
 #include "windowmap.c"
 
+int8_t playerLocation[2];
+int8_t backgroundLocation[2];
+int8_t gravity = -1;
+int16_t fallSpeed = 0;
+
+void efficientDelay(uint8_t loops){
+    uint8_t i;
+    for (i=0; i<loops;i++){
+        wait_vbl_done();
+    }
+}
 
 void main(void)
 {
@@ -17,7 +29,9 @@ void main(void)
     
     //background
     set_bkg_data(37,10,citymaptextures);
-    set_bkg_tiles(0,0,40,36,citymap);
+    backgroundLocation[0] = 0;
+    backgroundLocation[1] = 1;
+    set_bkg_tiles(backgroundLocation[0],backgroundLocation[1],40,36,citymap);
     SHOW_BKG;
     DISPLAY_ON;
 
@@ -27,11 +41,13 @@ void main(void)
     move_win(7,135);
 
     //sprites
-    UINT8 currentspriteindex = 26;
+    uint8_t currentspriteindex = 26;
     int counter = 0;
     set_sprite_data(26,8,Arrow);
     set_sprite_tile(0,0);
-    move_sprite(0,88,78);
+    playerLocation[0] = 88;
+    playerLocation[1] = 78;
+    move_sprite(0,playerLocation[0],playerLocation[1]);
     SHOW_SPRITES;
 
     while (1)
@@ -43,22 +59,22 @@ void main(void)
             currentspriteindex = 27;
             set_sprite_tile(0, currentspriteindex);
             scroll_sprite(0,0,10);
-            delay(100);
+            efficientDelay(10);
             //sets and moves left
             currentspriteindex = 28;
             set_sprite_tile(0, currentspriteindex);
             scroll_sprite(0,-10,0);
-            delay(100);
+            efficientDelay(10);
             //sets and moves up
             currentspriteindex = 26;
             set_sprite_tile(0, currentspriteindex);
             scroll_sprite(0,0,-10);
-            delay(100);
+            efficientDelay(10);
             //sets and moves right
             currentspriteindex = 29;
             set_sprite_tile(0, currentspriteindex);
             scroll_sprite(0,10,0);
-            delay(100);
+            efficientDelay(10);
             counter++;
         }
         //game start sound. Hex values can also be binary values (eg 0b10000000 instead of 0x80)
@@ -72,7 +88,7 @@ void main(void)
             NR12_REG = 0x73;
             NR13_REG = 0x00;
             NR14_REG = 0xC3;
-            delay(100);
+            efficientDelay(10);
             counter++;
         }
         currentspriteindex = 6;
@@ -80,29 +96,42 @@ void main(void)
             case J_LEFT:
                 currentspriteindex = 32;
                 set_sprite_tile(0, currentspriteindex);
-                //scroll_sprite(0,-10,0);
-                scroll_bkg(-8,0);
+                playerLocation[0] -= 5;
+                move_sprite(0,playerLocation[0],playerLocation[1]);
+                scroll_bkg(-20,0);
                 break;
             case J_RIGHT:
                 currentspriteindex = 33;
                 set_sprite_tile(0, currentspriteindex);
-                //scroll_sprite(0,10,0);
-                scroll_bkg(8,0);
+                playerLocation[0] += 5;
+                move_sprite(0,playerLocation[0],playerLocation[1]);
+                scroll_bkg(10,0);
                 break;
             case J_DOWN:
                 currentspriteindex = 31;
                 set_sprite_tile(0, currentspriteindex);
-                //scroll_sprite(0,0,10);
-                scroll_bkg(0,8);
+                playerLocation[1] += 5;
+                move_sprite(0,playerLocation[0],playerLocation[1]);
+                scroll_bkg(0,10);
                 break;
             case J_UP:
                 currentspriteindex = 30;
                 set_sprite_tile(0, currentspriteindex);
-                //scroll_sprite(0,0,-10);
-                scroll_bkg(0,-8);
+                playerLocation[1] -= 5;
+                move_sprite(0,playerLocation[0],playerLocation[1]);
+                scroll_bkg(0,-10);
+                fallSpeed = 0;
                 break;
+            default: 
+                currentspriteindex = 33;
+                set_sprite_tile(0, currentspriteindex);
+                fallSpeed += gravity;
+                playerLocation[1] -= fallSpeed;
+                move_sprite(0,playerLocation[0],playerLocation[1]);
+                scroll_bkg(0,10);
         } 
-        delay(100);  
+        scroll_bkg(10,0);
+        efficientDelay(10);  
     }
     
 }
