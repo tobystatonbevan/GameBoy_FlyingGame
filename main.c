@@ -30,7 +30,7 @@ void main(void)
     //background
     set_bkg_data(37,10,citymaptextures);
     backgroundLocation[0] = 0;
-    backgroundLocation[1] = 1;
+    backgroundLocation[1] = 0;
     set_bkg_tiles(backgroundLocation[0],backgroundLocation[1],40,36,citymap);
     SHOW_BKG;
     DISPLAY_ON;
@@ -98,40 +98,50 @@ void main(void)
                 set_sprite_tile(0, currentspriteindex);
                 playerLocation[0] -= 5;
                 move_sprite(0,playerLocation[0],playerLocation[1]);
-                scroll_bkg(-20,0);
+                backgroundLocation[0] -= 8;
+                move_bkg(backgroundLocation[0],backgroundLocation[1]);
                 break;
             case J_RIGHT:
                 currentspriteindex = 33;
                 set_sprite_tile(0, currentspriteindex);
                 playerLocation[0] += 5;
                 move_sprite(0,playerLocation[0],playerLocation[1]);
-                scroll_bkg(10,0);
+                backgroundLocation[0] += 8;
+                move_bkg(backgroundLocation[0],backgroundLocation[1]);
                 break;
             case J_DOWN:
                 currentspriteindex = 31;
                 set_sprite_tile(0, currentspriteindex);
                 playerLocation[1] += 5;
                 move_sprite(0,playerLocation[0],playerLocation[1]);
-                scroll_bkg(0,10);
+                backgroundLocation[1] += 8;
+                move_bkg(backgroundLocation[0],backgroundLocation[1]);
                 break;
             case J_UP:
                 currentspriteindex = 30;
                 set_sprite_tile(0, currentspriteindex);
                 playerLocation[1] -= 5;
                 move_sprite(0,playerLocation[0],playerLocation[1]);
-                scroll_bkg(0,-10);
+                backgroundLocation[1] -= 8;
+                move_bkg(backgroundLocation[0],backgroundLocation[1]);
                 fallSpeed = 0;
                 break;
             default: 
                 currentspriteindex = 33;
                 set_sprite_tile(0, currentspriteindex);
+                if (fallSpeed < -5) {
+                    fallSpeed = -5;
+                }
                 fallSpeed += gravity;
                 playerLocation[1] -= fallSpeed;
                 move_sprite(0,playerLocation[0],playerLocation[1]);
-                scroll_bkg(0,10);
+                backgroundLocation[1] += 8;
+                backgroundLocation[0] += 4;
+                move_bkg(backgroundLocation[0],backgroundLocation[1]);
         } 
+    
         scroll_bkg(10,0);
-        efficientDelay(10);  
+        efficientDelay(10); 
     }
     
 }
