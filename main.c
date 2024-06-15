@@ -7,15 +7,55 @@
 #include "citymaptiles.c"
 #include "windowmap.c"
 
-int8_t playerLocation[2];
+uint8_t playerLocation[2];
 int8_t backgroundLocation[2];
 int8_t gravity = -1;
-int16_t fallSpeed = 0;
+int8_t fallSpeed = 0;
 
 void efficientDelay(uint8_t loops){
     uint8_t i;
     for (i=0; i<loops;i++){
         wait_vbl_done();
+    }
+}
+
+int CheckSpriteBoundaryX(uint8_t x) {
+    if (x > 160) {
+        return 160;
+    } else if (x < 10) {
+        return 10;
+    } else {
+        return x;
+    }
+        
+}
+int CheckSpriteBoundaryY(uint8_t y) {
+    if (y > 125){
+        return 125;
+    } else if (y < 20) {
+        return 20;
+    } else {
+        return y;
+    }
+}
+
+int CheckBackgroundBoundaryX(uint8_t x) {
+    if (x > 100) {
+        return 100;
+    } else if (x < 20) {
+        return 20;
+    } else {
+        return x;
+    }
+        
+}
+int CheckBackgroundBoundaryY(int8_t y) {
+    if (y > 80){
+        return 80;
+    } else if (y < 1) {
+        return 1;
+    } else {
+        return y;
     }
 }
 
@@ -97,6 +137,7 @@ void main(void)
                 currentspriteindex = 32;
                 set_sprite_tile(0, currentspriteindex);
                 playerLocation[0] -= 5;
+                playerLocation[0] = CheckSpriteBoundaryX(playerLocation[0]);
                 move_sprite(0,playerLocation[0],playerLocation[1]);
                 backgroundLocation[0] -= 8;
                 move_bkg(backgroundLocation[0],backgroundLocation[1]);
@@ -105,6 +146,7 @@ void main(void)
                 currentspriteindex = 33;
                 set_sprite_tile(0, currentspriteindex);
                 playerLocation[0] += 5;
+                playerLocation[0] = CheckSpriteBoundaryX(playerLocation[0]);
                 move_sprite(0,playerLocation[0],playerLocation[1]);
                 backgroundLocation[0] += 8;
                 move_bkg(backgroundLocation[0],backgroundLocation[1]);
@@ -113,16 +155,20 @@ void main(void)
                 currentspriteindex = 31;
                 set_sprite_tile(0, currentspriteindex);
                 playerLocation[1] += 5;
+                playerLocation[1] = CheckSpriteBoundaryY(playerLocation[1]);
                 move_sprite(0,playerLocation[0],playerLocation[1]);
                 backgroundLocation[1] += 8;
+                backgroundLocation[1] = CheckBackgroundBoundaryY(backgroundLocation[1]);
                 move_bkg(backgroundLocation[0],backgroundLocation[1]);
                 break;
             case J_UP:
                 currentspriteindex = 30;
                 set_sprite_tile(0, currentspriteindex);
                 playerLocation[1] -= 5;
+                playerLocation[1] = CheckSpriteBoundaryY(playerLocation[1]);
                 move_sprite(0,playerLocation[0],playerLocation[1]);
                 backgroundLocation[1] -= 8;
+                backgroundLocation[1] = CheckBackgroundBoundaryY(backgroundLocation[1]);
                 move_bkg(backgroundLocation[0],backgroundLocation[1]);
                 fallSpeed = 0;
                 break;
@@ -134,8 +180,10 @@ void main(void)
                 }
                 fallSpeed += gravity;
                 playerLocation[1] -= fallSpeed;
+                playerLocation[1] = CheckSpriteBoundaryY(playerLocation[1]);
                 move_sprite(0,playerLocation[0],playerLocation[1]);
                 backgroundLocation[1] += 8;
+                backgroundLocation[1] = CheckBackgroundBoundaryY(backgroundLocation[1]);
                 backgroundLocation[0] += 4;
                 move_bkg(backgroundLocation[0],backgroundLocation[1]);
         } 
